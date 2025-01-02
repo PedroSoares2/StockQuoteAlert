@@ -1,4 +1,6 @@
-﻿using StockQuote.Application.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using StockQuote.Application.Interfaces;
+using StockQuote.Domain.Entities;
 using System.Net;
 using System.Net.Mail;
 
@@ -6,26 +8,29 @@ namespace StockQuote.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {
-        public async Task SendAlert(string toEmail, string subject, string body)
+        private readonly SmtpSettings _smtpSettings;
+        public EmailService(IOptions<SmtpSettings> smtpSettings)
         {
-            var fromEmail = "pedropauloss12@gmail.com";
-            var password = "wjossmnkwcptxltd";
+            _smtpSettings = smtpSettings.Value;
+        }
 
+        public async Task SendAlert(string subject, string body)
+        {
             try
             {
-                var client = new SmtpClient("smtp.gmail.com", 587)
+                var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
                 {
                     EnableSsl = true,
                     UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromEmail, password),
+                    Credentials = new NetworkCredential(_smtpSettings.Sender, _smtpSettings.Password),
                 };
 
-                var mailMessage = new MailMessage(from: fromEmail, to: toEmail, subject: subject, body: body)
+                var mailMessage = new MailMessage(from: _smtpSettings.Sender, to: _smtpSettings.Recipient, subject: subject, body: body)
                 {
                     IsBodyHtml = true
                 };
 
-                client.Send(mailMessage);
+                await client.SendMailAsync(mailMessage);
             }
             catch (Exception ex)
             {

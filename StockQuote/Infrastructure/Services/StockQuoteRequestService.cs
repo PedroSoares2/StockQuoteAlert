@@ -1,4 +1,5 @@
-﻿using StockQuote.Application.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using StockQuote.Application.Interfaces;
 using StockQuote.Domain.Entities;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -7,23 +8,21 @@ namespace StockQuote.Infrastructure.Services;
 public class StockQuoteRequestService : IStockQuoteRequestService
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiBaseUrl;
-    private readonly string _token;
+    private readonly ApiSettings _apiSettings;
 
-    public StockQuoteRequestService(HttpClient httpClient)
+    public StockQuoteRequestService(HttpClient httpClient, IOptions<ApiSettings> apiSettings)
     {
         _httpClient = httpClient;
-        _apiBaseUrl = "https://brapi.dev/api/quote";
-        _token = "m9GigZdogMmh8Q2BcKD716";
+        _apiSettings = apiSettings.Value;
     }
 
-    public async Task<Stock> GetStock(string symbol, int range, int interval)
+    public async Task<Stock> GetStock(string symbol)
     {
         try
         {
-            var url = $"{_apiBaseUrl}/{symbol}?range={range}d&interval={interval}d";
+            var url = $"{_apiSettings.BaseUrl}/{symbol}?range=1d&interval=1d";
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiSettings.ApiToken);
 
             var responseContent = await _httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
 

@@ -12,6 +12,6 @@ public class SendEmailCommandHandler : ISendEmailCommandHandler
 
     public async Task Handle(SendEmailCommand command)
     {
-        await _emailService.SendAlert(command.ToEmail, command.Subject, command.Body);
+        await _emailService.SendAlert(command.Subject, command.Body);
     }
 }
