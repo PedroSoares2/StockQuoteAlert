@@ -28,7 +28,7 @@ O objetivo do sistema é enviar alertas por e-mail sempre que a cotação de um 
       ApiToken: O token de autenticação necessário para acessar a API.
       Exemplo: "seuTokenDeApi"
     
-     ![image](https://github.com/user-attachments/assets/1b406de4-5774-4675-8c85-3471b8ed2699)
+![image](https://github.com/user-attachments/assets/1b406de4-5774-4675-8c85-3471b8ed2699)
 
 2. Para executar a aplicação via linha de comando, copie o caminho completo do executável localizado na pasta Debug do projeto e adicione-o às variáveis de ambiente do sistema como um novo valor na variável Path.
 
