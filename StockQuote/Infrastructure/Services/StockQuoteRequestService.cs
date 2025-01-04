@@ -24,11 +24,11 @@ public class StockQuoteRequestService : IStockQuoteRequestService
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiSettings.ApiToken);
 
-            var responseContent = await _httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
+            var responseJson = await _httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
 
-            var jsonData = JsonSerializer.Deserialize<StockQuoteResponse>(responseContent);
+            var responseContent = JsonSerializer.Deserialize<ResponseContent>(responseJson);
 
-            var stock = JsonSerializer.Deserialize<Stock>(jsonData.Results[0]);
+            var stock = JsonSerializer.Deserialize<Stock>(responseContent.Results[0]);
 
             return stock;
         }

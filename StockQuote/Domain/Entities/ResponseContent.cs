@@ -2,7 +2,7 @@
 
 namespace StockQuote.Domain.Entities
 {
-    public class StockQuoteResponse
+    public class ResponseContent
     {
         [JsonPropertyName("results")]
         public dynamic Results { get; set; }

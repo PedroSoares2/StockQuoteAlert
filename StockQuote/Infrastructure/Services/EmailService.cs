@@ -18,15 +18,19 @@ namespace StockQuote.Infrastructure.Services
         {
             try
             {
-                var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
+                var client = new SmtpClient
                 {
+                    Host = _smtpSettings.Host,
+                    Port = _smtpSettings.Port,
                     EnableSsl = true,
                     UseDefaultCredentials = false,
                     Credentials = new NetworkCredential(_smtpSettings.Sender, _smtpSettings.Password),
                 };
 
-                var mailMessage = new MailMessage(from: _smtpSettings.Sender, to: _smtpSettings.Recipient, subject: subject, body: body)
+                var mailMessage = new MailMessage(from: _smtpSettings.Sender, to: _smtpSettings.Recipient)
                 {
+                    Subject = subject,
+                    Body = body,
                     IsBodyHtml = true
                 };
 

@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Hangfire.MemoryStorage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StockQuote.Application.BusinessLogics;
@@ -24,11 +25,18 @@ class Program
         var builder = Host.CreateDefaultBuilder(args)
             .ConfigureServices((context, services) =>
             {
-                services.Configure<SmtpSettings>(context.Configuration.GetSection("SmtpSettings"));
-                services.Configure<ApiSettings>(context.Configuration.GetSection("ApiSettings"));
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
+
+                services.AddSingleton<IConfiguration>(configuration);
+
+                services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
+                services.Configure<ApiSettings>(configuration.GetSection("ApiSettings"));
 
                 services.AddTransient<HttpClient>();
-                services.AddTransient<StockQuoteOrchestrator>();
+                services.AddSingleton<StockQuoteOrchestrator>();
                 services.AddTransient<IEmailService, EmailService>();
                 services.AddTransient<IStockQuoteRequestService, StockQuoteRequestService>();
                 services.AddTransient<IStockAnalysis, StockAnalysis>();
@@ -52,7 +60,7 @@ class Program
 
             recurringJobManager.AddOrUpdate(
                 "ProcessStockQuoteAnalysisJob",
-                () => stockOrchestrator.ProcessStockQuoteAnalysis(symbol, sellingReferencePrice, purchaseReferencePrice),
+                () => stockOrchestrator.ExecuteStockQuoteAnalysis(symbol, sellingReferencePrice, purchaseReferencePrice),
                 $"*/{JOB_TIME} * * * *"
             );
         }
