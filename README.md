@@ -32,4 +32,4 @@ O objetivo do sistema é enviar alertas por e-mail sempre que a cotação de um 
 
 2. Para executar a aplicação via linha de comando, copie o caminho completo do executável localizado na pasta Debug do projeto e adicione-o às variáveis de ambiente do sistema como um novo valor na variável Path.
 
-Exemplo de uso: stock-quote-alert.exe PETR4 22.67 22.59 
+Exemplo de uso: StockQuote.exe PETR4 22.67 22.59 
